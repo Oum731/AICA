@@ -131,3 +131,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--gr)}
 .msg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:12px} .msg.new{border-left:5px solid var(--or)} .msg header{color:var(--mut);font-size:.9rem} .msg p{white-space:pre-wrap}
 @media print{.hdr,.ftr,.admside{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* à la une, exemples, publicité, mentions légales */
+.featured{display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:32px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;text-decoration:none;color:inherit;box-shadow:0 10px 30px rgba(11,31,58,.08)}
+.featured img{width:100%;border-radius:14px;display:block}
+.featured h2{font-size:clamp(1.6rem,4vw,2.2rem)} .featured .btn{margin-top:14px}
+@media(max-width:760px){.featured{grid-template-columns:1fr;padding:16px}.featured img{max-width:340px;margin:0 auto}}
+.demo{position:absolute;top:12px;right:12px;background:var(--navy);color:#fff;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.cover{width:auto;max-width:100%;max-height:680px;object-fit:contain;display:block;margin:14px auto 22px;border-radius:var(--r);box-shadow:0 10px 30px rgba(11,31,58,.15)}
+.adslot{max-width:1120px;margin:28px auto;padding:0 20px;text-align:center;min-height:100px} .adslot small{display:block;color:var(--mut);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:50;max-width:760px;margin:0 auto;background:var(--navy);color:#e6edf6;border-radius:16px;padding:16px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 12px 40px rgba(0,0,0,.35)} .cookiebar p{margin:0;font-size:.92rem;flex:1 1 280px} .cookiebar a{color:#ffd9a8}
+.cookiebar .btn.ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+.legal h2{margin-top:1.6em;font-size:1.25rem} .legal li{margin-bottom:.4em}

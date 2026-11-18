@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { SECTIONS } from '@/config';
 import { safe } from '@/lib/db';
 import { postParSlug, dateLongue, heure } from '@/lib/posts';
+import { AdSlot } from '@/components/site/Ads';
+import { ADS } from '@/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +29,14 @@ export default async function Detail({ params }) {
       <Link href={`/${section}`} className="back">← {s.titre}</Link>
       <h1>{p.title}</h1>
       <p className="meta">
-        {p.event_date && <span>📅 {dateLongue(p.event_date)}{heure(p.event_date) !== '00:00' && ` à ${heure(p.event_date)}`}</span>}
+        {p.date_label ? <span>📅 {p.date_label}</span> : p.event_date && <span>📅 {dateLongue(p.event_date)}{heure(p.event_date) !== '00:00' && ` à ${heure(p.event_date)}`}</span>}
         {p.location && <span>📍 {p.location}</span>}
       </p>
-      {p.has_image && <img className="cover" src={`/api/media/${p.id}`} alt="" />}
+      {p.has_image && <a href={`/api/media/${p.id}`} target="_blank" rel="noopener"><img className="cover" src={`/api/media/${p.id}`} alt={`Affiche : ${p.title}`} /></a>}
       {p.summary && <p className="lead dark">{p.summary}</p>}
       <div className="prose">{p.body.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}</div>
+      {p.demo && <p className="banner warn">Contenu d’exemple, affiché en attendant les vraies publications de l’association.</p>}
+      <AdSlot client={ADS.client} slot={ADS.slot} />
       {p.type === 'event' && <div className="joincard slim"><p>Pas encore membre ? Obtenez votre carte AICA en 2 minutes.</p><Link className="btn" href="/adhesion">Devenir membre</Link></div>}
     </article>
   );

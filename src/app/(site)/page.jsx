@@ -1,17 +1,21 @@
 import Link from 'next/link';
 import { safe } from '@/lib/db';
-import { listerPosts } from '@/lib/posts';
+import { listerPosts, dateLongue } from '@/lib/posts';
+import { AdSlot } from '@/components/site/Ads';
+import { ADS } from '@/config';
 import { PostCard } from '@/components/site/Chrome';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Accueil() {
-  const [events, actions, activites, nb] = await Promise.all([
-    safe(() => listerPosts('event', { futur: 'futur', limit: 3 }), []),
-    safe(() => listerPosts('action', { limit: 3 }), []),
+  const [futurs, passes, activites, nb] = await Promise.all([
+    safe(() => listerPosts('event', { futur: 'futur', limit: 4 }), []),
+    safe(() => listerPosts('event', { futur: 'passe', limit: 3 }), []),
     safe(() => listerPosts('activity', { limit: 4 }), []),
     safe(async (sql) => (await sql`select count(*)::int n from members where status = 'active'`)[0].n, 0),
   ]);
+  const une = futurs[0] || null;
+  const events = futurs.slice(1);
   return (
     <>
       <section className="hero">
@@ -29,14 +33,31 @@ export default async function Accueil() {
 
       {nb > 0 && <section className="band"><div className="wrap"><b>{nb}</b> membre{nb > 1 ? 's' : ''} inscrit{nb > 1 ? 's' : ''} à ce jour</div></section>}
 
+      {une && (
+        <section className="sec wrap">
+          <p className="eyebrow">À la une</p>
+          <Link href={`/evenements/${une.slug}`} className="featured">
+            {une.has_image && <img src={`/api/media/${une.id}`} alt={`Affiche : ${une.title}`} />}
+            <div>
+              <h2>{une.title}</h2>
+              <p className="meta"><span>📅 {une.date_label || dateLongue(une.event_date)}</span>{une.location && <span>📍 {une.location}</span>}</p>
+              <p>{une.summary}</p>
+              <span className="btn">Voir les détails</span>
+            </div>
+          </Link>
+        </section>
+      )}
+
       <section className="sec wrap">
         <div className="sechead"><h2>Prochains événements</h2><Link href="/evenements">Tout voir →</Link></div>
         {events.length ? <div className="pgrid">{events.map((p) => <PostCard key={p.id} p={p} section="evenements" />)}</div> : <p className="empty">Aucun événement programmé pour le moment. Revenez bientôt !</p>}
       </section>
 
+      <AdSlot client={ADS.client} slot={ADS.slot} />
+
       <section className="sec alt"><div className="wrap">
-        <div className="sechead"><h2>Nos actions</h2><Link href="/actions">Tout voir →</Link></div>
-        {actions.length ? <div className="pgrid">{actions.map((p) => <PostCard key={p.id} p={p} section="actions" />)}</div> : <p className="empty">Nos actions seront bientôt présentées ici.</p>}
+        <div className="sechead"><h2>Nos réalisations</h2><Link href="/evenements">Tout voir →</Link></div>
+        {passes.length ? <div className="pgrid">{passes.map((p) => <PostCard key={p.id} p={p} section="evenements" />)}</div> : <p className="empty">Nos actions et événements passés seront bientôt présentés ici.</p>}
       </div></section>
 
       <section className="sec wrap">

@@ -113,7 +113,7 @@ export default function MemberForm({ admin = false }) {
           {!admin && (
             <label className={'check' + (errs.consent ? ' has-err' : '')}>
               <input type="checkbox" checked={consent} onChange={(e) => { setConsent(e.target.checked); setErrs((s) => ({ ...s, consent: undefined })); }} />
-              <span>Je confirme que ces informations sont exactes et j’accepte qu’AICA les conserve pour gérer mon adhésion et éditer ma carte de membre.</span>
+              <span>Je confirme que ces informations sont exactes et j’accepte qu’AICA les conserve pour gérer mon adhésion et éditer ma carte de membre, <b>pour un usage interne et d’archives uniquement, jamais commercial</b>. <a href="/confidentialite" target="_blank" rel="noopener">En savoir plus</a>.</span>
             </label>
           )}
           {errs.consent && <p className="err">{errs.consent}</p>}

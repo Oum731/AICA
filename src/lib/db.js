@@ -1,4 +1,5 @@
 import postgres from 'postgres';
+import { semer } from './seed';
 
 const SCHEMA = `
 create table if not exists members (
@@ -40,6 +41,10 @@ create table if not exists posts (
   published boolean not null default true,
   created_at timestamptz not null default now()
 );
+alter table posts add column if not exists demo boolean not null default false;
+alter table posts add column if not exists date_label text not null default '';
+update posts set type = 'event' where type = 'action';
+create table if not exists settings (key text primary key, value text);
 create table if not exists messages (
   id serial primary key,
   nom text not null,
@@ -66,7 +71,7 @@ export async function getDb() {
     const local = /@(localhost|127\.0\.0\.1)/.test(url);
     sql = postgres(url, { max: 1, idle_timeout: 20, connect_timeout: 15, prepare: false, ssl: local ? false : 'require' });
   }
-  if (!ready) ready = sql.unsafe(SCHEMA).catch((e) => { ready = null; throw e; });
+  if (!ready) ready = sql.unsafe(SCHEMA).then(() => sql.begin((tx) => semer(tx))).catch((e) => { ready = null; throw e; });
   await ready;
   return sql;
 }

@@ -14,8 +14,7 @@ export default async function PanelLayout({ children }) {
         <nav>
           <Link href="/admin">📊 Tableau de bord</Link>
           <Link href="/admin/membres">🪪 Membres & cartes</Link>
-          <Link href="/admin/contenus?type=event">📅 Événements</Link>
-          <Link href="/admin/contenus?type=action">🤝 Actions</Link>
+          <Link href="/admin/contenus?type=event">📅 Événements & actions</Link>
           <Link href="/admin/contenus?type=activity">⚽ Activités</Link>
           <Link href="/admin/messages">✉️ Messages</Link>
           <Link href="/" target="_blank">🌐 Voir le site</Link>

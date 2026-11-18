@@ -1,0 +1,31 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}
+body{width:1080px;height:1350px;font-family:Inter,Helvetica,Arial,sans-serif;color:#fff;background:radial-gradient(circle at 50% 28%,#1b5a8a 0%,#0b1f3a 62%,#07142a 100%);position:relative;overflow:hidden}
+.snow i{position:absolute;border-radius:50%;background:#fff;opacity:.75}
+.top{position:absolute;top:44px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:22px}
+.top img{width:118px;height:118px;border-radius:50%;background:#fff;padding:6px}
+.top b{font-size:34px;letter-spacing:.04em;line-height:1.15;text-transform:uppercase;text-align:left}
+.top small{display:block;font-size:24px;font-weight:500;color:#ffd9a8;letter-spacing:.12em}
+h1{position:absolute;top:214px;left:0;right:0;text-align:center;font-size:132px;line-height:.95;font-weight:900;letter-spacing:-.02em;color:#fff;text-shadow:0 6px 0 #f77f00}
+h1 span{display:block;font-size:56px;letter-spacing:.32em;color:#ffd9a8;text-shadow:none;font-weight:700;margin-bottom:10px}
+.sub{position:absolute;top:552px;left:0;right:0;text-align:center;font-size:44px;font-weight:600;color:#cfe8d8}
+svg.tree{position:absolute;top:640px;left:50%;transform:translateX(-50%);width:345px}
+.info{position:absolute;left:70px;right:70px;bottom:128px;background:#fff;color:#0b1f3a;border-radius:34px;padding:30px 36px;display:flex;justify-content:space-between;align-items:center;gap:20px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.info div{flex:1}.info em{display:block;font-style:normal;font-size:22px;font-weight:700;color:#e06f00;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.info b{font-size:40px;line-height:1.1;font-weight:800}.sep{width:3px;height:92px;background:#e8e1d6;flex:none!important}
+.tbc{position:absolute;bottom:92px;left:0;right:0;text-align:center;font-size:25px;color:#ffd9a8;font-weight:600}
+.foot{position:absolute;bottom:34px;left:0;right:0;text-align:center;font-size:25px;color:#c9d4e2}
+.flag{position:absolute;bottom:0;left:0;right:0;height:16px;display:flex}.flag i{flex:1}
+</style><body>
+<div class="snow" id="s"></div>
+<div class="top"><img src="file:///tmp/logo-affiche.png"><b>Association des<br>Ivoiriens de Casablanca<small>AICA</small></b></div>
+<h1><span>Grand</span>ARBRE<br>DE NOËL</h1>
+<p class="sub">Une fête pour les enfants de la communauté</p>
+<svg class="tree" viewBox="0 0 300 330"><polygon points="150,10 235,120 200,120 262,215 218,215 285,300 15,300 82,215 38,215 100,120 65,120" fill="#009e60"/><polygon points="150,10 235,120 200,120 262,215 218,215 285,300 150,300" fill="#007f4d" opacity=".55"/><rect x="128" y="298" width="44" height="30" rx="4" fill="#8a5a2b"/><polygon points="150,-12 158,8 180,8 162,20 169,42 150,29 131,42 138,20 120,8 142,8" fill="#ffc83d"/>
+<circle cx="120" cy="105" r="9" fill="#f77f00"/><circle cx="178" cy="150" r="9" fill="#fff"/><circle cx="108" cy="190" r="9" fill="#f77f00"/><circle cx="195" cy="238" r="9" fill="#fff"/><circle cx="92" cy="262" r="9" fill="#fff"/><circle cx="150" cy="215" r="9" fill="#f77f00"/><circle cx="222" cy="275" r="9" fill="#f77f00"/><circle cx="150" cy="86" r="8" fill="#fff"/><circle cx="150" cy="268" r="9" fill="#ffc83d"/></svg>
+<div class="info"><div><em>Quand</em><b>Décembre 2026</b></div><div class="sep"></div><div><em>Où</em><b>Aïn Sebaâ<br>Wifaq, Casablanca</b></div></div>
+<p class="tbc">Date et heure précises à confirmer</p>
+<p class="foot">Infos : aicaivoirienscasa@gmail.com</p>
+<div class="flag"><i style="background:#f77f00"></i><i style="background:#fff"></i><i style="background:#009e60"></i></div>
+<script>const s=document.getElementById('s');let r=7;const rnd=()=>(r=(r*9301+49297)%233280)/233280;for(let i=0;i<70;i++){const e=document.createElement('i'),z=3+rnd()*7;e.style.cssText=`left:${rnd()*1080}px;top:${rnd()*1350}px;width:${z}px;height:${z}px`;s.appendChild(e)}</script>
+</body></html>

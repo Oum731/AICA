@@ -1,7 +1,7 @@
 import { getDb } from './db';
 import { slugify } from './validate';
 
-const COLS = `id, type, title, slug, summary, body, event_date, to_char(event_date at time zone 'Africa/Casablanca', 'YYYY-MM-DD"T"HH24:MI') as event_local, location, image_type, (image is not null) as has_image, published, created_at`;
+const COLS = `id, type, title, slug, summary, body, event_date, to_char(event_date at time zone 'Africa/Casablanca', 'YYYY-MM-DD"T"HH24:MI') as event_local, location, image_type, (image is not null) as has_image, published, demo, date_label, created_at`;
 
 export async function listerPosts(type, { admin = false, limit = 60, futur = null } = {}) {
   const sql = await getDb();

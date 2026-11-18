@@ -3,7 +3,9 @@
 Site vitrine moderne + espace d'administration + **carte de membre générée automatiquement** (PDF recto/verso avec QR code de vérification, enregistrée côté admin).
 
 - **Public** : accueil, événements, actions, activités, l'association, contact, adhésion (`/adhesion`), vérification d'une carte via QR (`/verification/AICA-2026-0001`).
-- **Admin** (`/admin`) : tableau de bord, membres & cartes (recherche, PDF, régénération, révocation, export CSV/Excel, création manuelle), événements / actions / activités (avec photo), messages du formulaire de contact.
+- **Admin** (`/admin`) : tableau de bord, membres & cartes (recherche, PDF, régénération, révocation, export CSV/Excel, création manuelle), événements (les « actions menées » sont des événements déjà réalisés) et activités (avec photo/affiche), messages du formulaire de contact.
+- **Contenus d'exemple** : au premier lancement, quelques contenus fictifs marqués « Exemple » sont créés (bouton « Supprimer tous les exemples » dans l'admin). L'**arbre de Noël des enfants** (Aïn Sebaâ, Wifaq, décembre 2026, avec son affiche `public/affiches/`) est, lui, un vrai événement : complétez sa date exacte depuis l'admin (Événements → Arbre de Noël).
+- **Pages légales** : `/confidentialite` (données des membres : usage interne et archives, jamais commercial) et `/mentions-legales`.
 - **Carte** : mêmes champs que votre modèle (nom, prénoms, naissance, fonction, profession, quartier, téléphone, urgence, n° pièce, photo, n° `AICA-AAAA-NNNN`, validité 1 an, cachet du Président). La mise en page est dans `src/lib/card-layout.js` (aperçu écran + PDF).
 
 ## Mise en ligne 100 % gratuite (≈ 15 minutes)
@@ -47,3 +49,12 @@ npm test
 ## À personnaliser
 - Textes de `/a-propos` (rédigés de façon générique), pied de page, couleurs (`src/app/globals.css`).
 - Le **cachet du Président** est celui de votre modèle (`public/brand/cachet.png`, intégré via `npm run` → `node scripts/embed-assets.mjs` si vous le changez).
+
+## Publicité Google AdSense (revenus)
+Le site est prêt à afficher des publicités **Google AdSense** (ce n'est pas « Google Ads », qui sert à payer pour faire de la pub).
+1. Créez un compte sur [adsense.google.com](https://adsense.google.com), ajoutez l'adresse du site et suivez la vérification. L'examen par Google peut prendre de quelques jours à quelques semaines.
+2. Dans AdSense, créez un bloc d'annonces « display » (réactif) et notez son **identifiant de bloc** ; notez aussi votre **identifiant éditeur** `ca-pub-…`.
+3. Dans Vercel → Environment Variables, ajoutez `NEXT_PUBLIC_ADSENSE_CLIENT` (`ca-pub-…`) et `NEXT_PUBLIC_ADSENSE_SLOT` (id du bloc), puis **Redeploy**.
+4. Dans AdSense, laissez les « annonces automatiques » **désactivées** (ou excluez `/adhesion`, `/carte`, `/verification`, `/admin`) : les annonces ne doivent apparaître que dans les emplacements prévus (accueil, listes et pages d'événements).
+Tant que ces variables sont vides, aucune publicité ni bandeau cookies n'est affiché. Un bandeau de consentement (Accepter / annonces non personnalisées) apparaît dès qu'elles sont renseignées ; le fichier `/ads.txt` est généré automatiquement.
+**Attention** : l'offre gratuite « Hobby » de Vercel est réservée à un usage non commercial ; une fois les publicités activées, passez à un hébergement qui l'autorise.

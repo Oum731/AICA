@@ -21,7 +21,7 @@ export async function logout() { await fermerSession(); redirect('/admin/login')
 export async function savePost(prev, fd) {
   await exigerAdmin();
   const id = Number(fd.get('id')) || 0;
-  const type = ['event', 'action', 'activity'].includes(fd.get('type')) ? fd.get('type') : 'event';
+  const type = fd.get('type') === 'activity' ? 'activity' : 'event';
   const title = String(fd.get('title') || '').trim().slice(0, 140);
   if (title.length < 3) return { erreur: 'Le titre est obligatoire.' };
   const summary = String(fd.get('summary') || '').trim().slice(0, 300);
@@ -29,6 +29,7 @@ export async function savePost(prev, fd) {
   const location = String(fd.get('location') || '').trim().slice(0, 120);
   const local = String(fd.get('event_date') || '');
   const event_date = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local) ? local : null;
+  const date_label = String(fd.get('date_label') || '').trim().slice(0, 80);
   const published = fd.get('published') === 'on';
   const sql = await getDb();
   let image = null, image_type = null;
@@ -40,17 +41,24 @@ export async function savePost(prev, fd) {
   const retirer = fd.get('remove_image') === 'on';
   if (id) {
     const slug = await slugUnique(sql, title, id);
-    await sql`update posts set type = ${type}, title = ${title}, slug = ${slug}, summary = ${summary}, body = ${body}, location = ${location},
+    await sql`update posts set type = ${type}, title = ${title}, slug = ${slug}, summary = ${summary}, body = ${body}, location = ${location}, date_label = ${date_label}, demo = false,
       event_date = ${event_date ? sql`${event_date}::timestamp at time zone 'Africa/Casablanca'` : null}, published = ${published} where id = ${id}`;
     if (image) await sql`update posts set image = ${image}, image_type = ${image_type} where id = ${id}`;
     else if (retirer) await sql`update posts set image = null, image_type = null where id = ${id}`;
   } else {
     const slug = await slugUnique(sql, title);
-    await sql`insert into posts (type, title, slug, summary, body, location, event_date, published, image, image_type)
-      values (${type}, ${title}, ${slug}, ${summary}, ${body}, ${location}, ${event_date ? sql`${event_date}::timestamp at time zone 'Africa/Casablanca'` : null}, ${published}, ${image}, ${image_type})`;
+    await sql`insert into posts (type, title, slug, summary, body, location, date_label, event_date, published, image, image_type)
+      values (${type}, ${title}, ${slug}, ${summary}, ${body}, ${location}, ${date_label}, ${event_date ? sql`${event_date}::timestamp at time zone 'Africa/Casablanca'` : null}, ${published}, ${image}, ${image_type})`;
   }
   revalidatePath('/', 'layout');
   redirect('/admin/contenus?type=' + type);
+}
+export async function deleteDemos() {
+  await exigerAdmin();
+  const sql = await getDb();
+  await sql`delete from posts where demo`;
+  revalidatePath('/', 'layout');
+  redirect('/admin/contenus?type=event');
 }
 export async function deletePost(fd) {
   await exigerAdmin();
@@ -64,7 +72,8 @@ export async function deletePost(fd) {
 export async function setStatut(fd) {
   await exigerAdmin();
   const id = Number(fd.get('id')); const st = fd.get('statut') === 'revoked' ? 'revoked' : 'active';
-  await (await getDb())`update members set status = ${st} where id = ${id}`;
+  const sql = await getDb();
+  await sql`update members set status = ${st} where id = ${id}`;
   revalidatePath('/admin/membres/' + id);
   redirect('/admin/membres/' + id);
 }
@@ -87,16 +96,19 @@ export async function regenerer(fd) {
 }
 export async function deleteMembre(fd) {
   await exigerAdmin();
-  await (await getDb())`delete from members where id = ${Number(fd.get('id'))}`;
+  const sql = await getDb();
+  await sql`delete from members where id = ${Number(fd.get('id'))}`;
   redirect('/admin/membres');
 }
 export async function markRead(fd) {
   await exigerAdmin();
-  await (await getDb())`update messages set is_read = true where id = ${Number(fd.get('id'))}`;
+  const sql = await getDb();
+  await sql`update messages set is_read = true where id = ${Number(fd.get('id'))}`;
   revalidatePath('/admin/messages');
 }
 export async function deleteMessage(fd) {
   await exigerAdmin();
-  await (await getDb())`delete from messages where id = ${Number(fd.get('id'))}`;
+  const sql = await getDb();
+  await sql`delete from messages where id = ${Number(fd.get('id'))}`;
   revalidatePath('/admin/messages');
 }

@@ -3,6 +3,8 @@ import { SECTIONS } from '@/config';
 import { safe } from '@/lib/db';
 import { listerPosts } from '@/lib/posts';
 import { PostCard } from '@/components/site/Chrome';
+import { AdSlot } from '@/components/site/Ads';
+import { ADS } from '@/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +26,8 @@ export default async function Liste({ params }) {
       <h1>{s.titre}</h1><p className="lead dark">{s.desc}</p>
       {ev && <h2 className="sub">À venir</h2>}
       {futurs.length ? <div className="pgrid">{futurs.map((p) => <PostCard key={p.id} p={p} section={key} />)}</div> : <p className="empty">{ev ? 'Aucun événement programmé pour le moment.' : 'Rien à afficher pour le moment.'}</p>}
-      {ev && autres.length > 0 && (<><h2 className="sub">Événements passés</h2><div className="pgrid">{autres.map((p) => <PostCard key={p.id} p={p} section={key} />)}</div></>)}
+      <AdSlot client={ADS.client} slot={ADS.slot} />
+      {ev && autres.length > 0 && (<><h2 className="sub">Déjà réalisés</h2><div className="pgrid">{autres.map((p) => <PostCard key={p.id} p={p} section={key} />)}</div></>)}
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default async function Dashboard() {
         <Link href="/admin/contenus?type=event" className="stat"><b>{s.events}</b>événements à venir</Link>
         <Link href="/admin/messages" className="stat"><b>{s.msgs}</b>messages non lus</Link>
       </div>
-      <div className="quick"><Link className="btn" href="/admin/contenus/nouveau?type=event">+ Événement</Link><Link className="btn" href="/admin/contenus/nouveau?type=action">+ Action</Link><Link className="btn" href="/admin/contenus/nouveau?type=activity">+ Activité</Link><Link className="btn ghost" href="/admin/membres/nouveau">+ Carte de membre</Link></div>
+      <div className="quick"><Link className="btn" href="/admin/contenus/nouveau?type=event">+ Événement / action</Link><Link className="btn" href="/admin/contenus/nouveau?type=activity">+ Activité</Link><Link className="btn ghost" href="/admin/membres/nouveau">+ Carte de membre</Link></div>
       <h2>Dernières cartes générées</h2>
       <table className="tbl"><tbody>{derniers.map((m) => <tr key={m.id}><td><Link href={`/admin/membres/${m.id}`}>{m.number}</Link></td><td>{m.prenoms} {m.nom}</td><td>{fmtDate(m.created_at)}</td></tr>)}{!derniers.length && <tr><td>Aucun membre pour l’instant.</td></tr>}</tbody></table>
     </>
