@@ -6,7 +6,9 @@ import { W, H, FLAG_CI, FLAG_MA, PHOTO, BADGE, STAMP, LOGO, QR, NAVY, frontTexts
 import { SITE } from '@/config';
 
 const hex = (h) => { const n = parseInt(h.slice(1), 16); return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); };
-const b64 = (k) => Buffer.from(assets[k], 'base64');
+// pdf-lib lit mal les petits Buffer Node (mémoire partagée) : on lui donne toujours une copie propre
+const u8 = (b) => new Uint8Array(b);
+const b64 = (k) => u8(Buffer.from(assets[k], 'base64'));
 
 let fondCache;
 async function fond() {
@@ -32,12 +34,12 @@ export async function genererCartePdf(m, photo) {
     i: await pdf.embedFont(StandardFonts.HelveticaOblique),
     bi: await pdf.embedFont(StandardFonts.HelveticaBoldOblique),
   };
-  const bg = await pdf.embedPng(await fond());
+  const bg = await pdf.embedPng(u8(await fond()));
   const img = {
     ci: await pdf.embedPng(b64('ci')), ma: await pdf.embedPng(b64('ma')),
     logo: await pdf.embedPng(b64('logo')), cachet: await pdf.embedPng(b64('cachet')),
-    photo: photo ? await pdf.embedJpg(photo) : null,
-    qr: await pdf.embedPng(await QRCode.toBuffer(urlVerification(m.number), { margin: 1, width: 360, errorCorrectionLevel: 'M' })),
+    photo: photo ? await pdf.embedJpg(u8(photo)) : null,
+    qr: await pdf.embedPng(u8(await QRCode.toBuffer(urlVerification(m.number), { margin: 1, width: 360, errorCorrectionLevel: 'M' }))),
   };
 
   // Les polices standard ne gèrent pas tous les caractères : on retire ceux qui poseraient problème

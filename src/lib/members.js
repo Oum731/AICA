@@ -6,13 +6,21 @@ import { SITE } from '@/config';
 
 // Colonnes publiques (sans photo ni PDF, volumineux). Les dates sortent en texte AAAA-MM-JJ.
 export const COLS = `id, number, token, nom, prenoms, naissance_date::text as naissance_date, naissance_lieu, fonction, profession, quartier,
-  telephone, email, urgence_nom, urgence_tel, piece_no, status, valid_from::text as valid_from, valid_to::text as valid_to, created_at`;
+  telephone, email, urgence_nom, urgence_tel, piece_no, status, valid_from::text as valid_from, valid_to::text as valid_to, created_at,
+  sexe, situation, date_maroc::text as date_maroc, diplome, reseaux, logement, source, photo_url, (photo is not null) as has_photo`;
 
 export async function traiterPhoto(buffer) {
   return sharp(buffer, { failOn: 'none' }).rotate().resize(480, 640, { fit: 'cover', position: 'attention' }).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
 }
 
-const numero = (id, annee) => `AICA-${annee}-${String(id).padStart(4, '0')}`;
+export const formatNumero = (annee, n) => `AICA-${annee}-${String(n).padStart(4, '0')}`;
+
+// Prochain numéro libre de l'année (tient compte des numéros importés). À appeler dans une transaction.
+export async function prochainNumero(tx, annee) {
+  await tx`select pg_advisory_xact_lock(731001)`;
+  const [{ n }] = await tx.unsafe(`select coalesce(max((regexp_match(number, '^AICA-' || $1 || '-(\\d+)$'))[1]::int), 0) + 1 as n from members`, [String(annee)]);
+  return formatNumero(annee, n);
+}
 
 export async function creerMembre(data, photoBuf, ipHash) {
   const sql = await getDb();
@@ -25,18 +33,18 @@ export async function creerMembre(data, photoBuf, ipHash) {
   const token = randomBytes(16).toString('hex');
   const photo = await traiterPhoto(photoBuf);
   const id = await sql.begin(async (tx) => {
+    const [{ y }] = await tx`select extract(year from current_date)::int y`;
+    const number = await prochainNumero(tx, y);
     const [r] = await tx`
       insert into members (number, token, nom, prenoms, naissance_date, naissance_lieu, fonction, profession, quartier, telephone, email,
         urgence_nom, urgence_tel, piece_no, photo, valid_from, valid_to, ip_hash)
-      values (${'tmp-' + token}, ${token}, ${data.nom}, ${data.prenoms}, ${data.naissance_date}, ${data.naissance_lieu}, ${data.fonction}, ${data.profession},
+      values (${number}, ${token}, ${data.nom}, ${data.prenoms}, ${data.naissance_date}, ${data.naissance_lieu}, ${data.fonction}, ${data.profession},
         ${data.quartier}, ${data.telephone}, ${data.email}, ${data.urgence_nom}, ${data.urgence_tel}, ${data.piece_no}, ${photo},
         current_date, (current_date + (${SITE.validiteMois} * interval '1 month'))::date, ${ipHash || null})
       returning id`;
-    const [{ y }] = await tx`select extract(year from current_date)::int y`;
-    await tx`update members set number = ${numero(r.id, y)} where id = ${r.id}`;
     return r.id;
   });
-  await regenererCarte(id);
+  try { await regenererCarte(id); } catch (e) { console.error('[pdf]', e.message); } // sinon généré à la première demande
   const m = await membreParId(id);
   return { membre: m };
 }

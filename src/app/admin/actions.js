@@ -7,6 +7,8 @@ import { getDb } from '@/lib/db';
 import { slugUnique } from '@/lib/posts';
 import { regenererCarte } from '@/lib/members';
 import { validerMembre } from '@/lib/validate';
+import { importer, telechargerSheets, recupererPhotos } from '@/lib/import';
+import { traiterPhoto } from '@/lib/members';
 
 export async function login(prev, fd) {
   if (!process.env.ADMIN_PASSWORD || !process.env.ADMIN_EMAIL) return { erreur: 'ADMIN_EMAIL / ADMIN_PASSWORD ne sont pas configurés sur le serveur.' };
@@ -85,6 +87,11 @@ export async function updateMembre(prev, fd) {
   const sql = await getDb();
   await sql`update members set nom = ${d.nom}, prenoms = ${d.prenoms}, naissance_date = ${d.naissance_date}, naissance_lieu = ${d.naissance_lieu}, fonction = ${d.fonction},
     profession = ${d.profession}, quartier = ${d.quartier}, telephone = ${d.telephone}, email = ${d.email}, urgence_nom = ${d.urgence_nom}, urgence_tel = ${d.urgence_tel}, piece_no = ${d.piece_no} where id = ${id}`;
+  const f = fd.get('photo');
+  if (f && typeof f !== 'string' && f.size > 0) {
+    try { const photo = await traiterPhoto(Buffer.from(await f.arrayBuffer())); await sql`update members set photo = ${photo} where id = ${id}`; }
+    catch { return { erreurs: { photo: 'Photo illisible.' } }; }
+  }
   await regenererCarte(id);
   redirect('/admin/membres/' + id + '?maj=1');
 }
@@ -111,4 +118,28 @@ export async function deleteMessage(fd) {
   const sql = await getDb();
   await sql`delete from messages where id = ${Number(fd.get('id'))}`;
   revalidatePath('/admin/messages');
+}
+
+// ---------- Import depuis l'ancien Google Sheet ----------
+export async function importerAction(prev, fd) {
+  await exigerAdmin();
+  const simulation = fd.get('mode') !== 'importer';
+  try {
+    let csv = '';
+    const lien = String(fd.get('lien') || '').trim();
+    const f = fd.get('fichier');
+    if (f && typeof f !== 'string' && f.size > 0) csv = await f.text();
+    else if (String(fd.get('texte') || '').trim()) csv = String(fd.get('texte'));
+    else if (lien) csv = await telechargerSheets(lien);
+    else return { erreur: 'Collez le lien du Google Sheet, ou envoyez un fichier CSV.' };
+    const r = await importer(csv, { simulation });
+    if (!simulation && !r.erreur) revalidatePath('/admin/membres');
+    return { ...r, simulation };
+  } catch (e) {
+    return { erreur: e.message || 'Erreur pendant l’import.' };
+  }
+}
+export async function photosAction() {
+  await exigerAdmin();
+  try { return await recupererPhotos(6); } catch (e) { return { erreur: e.message }; }
 }

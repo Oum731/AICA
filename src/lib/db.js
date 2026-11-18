@@ -41,6 +41,18 @@ create table if not exists posts (
   published boolean not null default true,
   created_at timestamptz not null default now()
 );
+alter table members add column if not exists sexe text not null default '';
+alter table members add column if not exists situation text not null default '';
+alter table members add column if not exists date_maroc date;
+alter table members add column if not exists diplome text not null default '';
+alter table members add column if not exists reseaux text not null default '';
+alter table members add column if not exists logement text not null default '';
+alter table members add column if not exists source text not null default 'site';
+alter table members add column if not exists photo_url text;
+alter table members add column if not exists photo_tries int not null default 0;
+alter table members alter column naissance_date drop not null;
+alter table members alter column telephone drop not null;
+alter table members alter column urgence_tel drop not null;
 alter table posts add column if not exists demo boolean not null default false;
 alter table posts add column if not exists date_label text not null default '';
 update posts set type = 'event' where type = 'action';

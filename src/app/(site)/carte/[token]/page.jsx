@@ -23,7 +23,7 @@ export default async function Carte({ params }) {
       <p className="ok banner">🎉 Bienvenue {m.prenoms.split(' ')[0]} ! Votre carte <b>{m.number}</b> est prête.</p>
       {m.status !== 'active' && <p className="err banner">Cette carte n’est plus active.</p>}
       <div className="cardpair">
-        <CardView m={m} photoUrl={`/api/carte/${token}/photo`} />
+        <CardView m={m} photoUrl={m.has_photo ? `/api/carte/${token}/photo` : null} />
         <CardView m={m} side="back" qr={qr} />
       </div>
       <div className="cta c">

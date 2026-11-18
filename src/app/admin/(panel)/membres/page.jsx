@@ -9,7 +9,7 @@ export default async function Membres({ searchParams }) {
   const rows = await listerMembres({ q, statut });
   return (
     <>
-      <div className="rowhead"><h1>Membres & cartes <small>({rows.length})</small></h1><div><Link className="btn" href="/admin/membres/nouveau">+ Nouvelle carte</Link> <a className="btn ghost" href="/api/admin/export">⬇ Export Excel (CSV)</a></div></div>
+      <div className="rowhead"><h1>Membres & cartes <small>({rows.length})</small></h1><div><Link className="btn" href="/admin/membres/nouveau">+ Nouvelle carte</Link> <Link className="btn ghost" href="/admin/membres/import">⬆ Importer l’ancien Sheet</Link> <a className="btn ghost" href="/api/admin/export">⬇ Export Excel (CSV)</a></div></div>
       <form className="filters"><input name="q" defaultValue={q} placeholder="Rechercher : nom, n° de carte, téléphone…" /><select name="statut" defaultValue={statut}><option value="">Tous</option><option value="active">Actifs</option><option value="revoked">Révoqués</option></select><button className="btn small">Filtrer</button></form>
       <div className="tablewrap"><table className="tbl">
         <thead><tr><th>N°</th><th>Nom</th><th>Téléphone</th><th>Fonction</th><th>Valable jusqu’au</th><th>Statut</th><th></th></tr></thead>

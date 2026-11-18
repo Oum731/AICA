@@ -1,6 +1,7 @@
 'use client';
 import { useActionState } from 'react';
 import { updateMembre } from '../../../actions';
+import ImageField from '@/components/ImageField';
 
 const C = [['nom', 'Nom'], ['prenoms', 'Prénoms'], ['naissance_date', 'Date de naissance', 'date'], ['naissance_lieu', 'Lieu de naissance'], ['fonction', 'Fonction'], ['profession', 'Profession'], ['quartier', 'Quartier'], ['telephone', 'Téléphone', 'tel'], ['email', 'E-mail', 'email'], ['urgence_nom', 'Urgence (nom)'], ['urgence_tel', 'Urgence (téléphone)', 'tel'], ['piece_no', 'N° pièce']];
 
@@ -12,6 +13,7 @@ export default function MembreEdit({ m }) {
       {C.map(([n, l, t]) => (
         <label key={n} className={'field' + (st?.erreurs?.[n] ? ' has-err' : '')}><span className="lbl">{l}</span><input name={n} type={t || 'text'} defaultValue={m[n] ?? ''} />{st?.erreurs?.[n] && <p className="err">{st.erreurs[n]}</p>}</label>
       ))}
+      <div className="full"><ImageField name="photo" label="Photo (laisser vide pour garder l’actuelle)" camera maxSide={900} current={m.has_photo ? `/api/admin/membres/${m.id}/photo` : null} error={st?.erreurs?.photo} /></div>
       <div className="full"><button className="btn" disabled={pending}>{pending ? 'Enregistrement…' : 'Enregistrer et régénérer la carte'}</button></div>
     </form>
   );

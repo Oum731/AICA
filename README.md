@@ -33,6 +33,9 @@ Il faut 2 comptes gratuits : **Supabase** (base de données) et **Vercel** (héb
 - Vercel « Hobby » est prévu pour un usage non commercial : correct pour une association.
 - **Sauvegarde** : exportez régulièrement les membres (Admin → Membres → Export CSV).
 
+## Reprendre l'historique de l'ancien Google Sheet
+Admin → Membres → **Importer l'ancien Sheet** : collez le lien du Sheet (partagé « Toute personne disposant du lien : lecteur ») ou envoyez son export CSV. Cliquez d'abord sur **Vérifier** (rien n'est enregistré), puis **Importer**. Les numéros de carte (`AICA-AAAA-NNNN`) sont conservés, les doublons ignorés, les colonnes reconnues par leur nom (`nom`, `prenom`, `naissance_date`, `contact`, `metier`, `photoUrl`, `expiration`…). Les photos sont récupérées par lots depuis les liens du Sheet ; sinon, ajoutez-les à la main sur la fiche du membre.
+
 ## Lancer en local
 ```bash
 npm install

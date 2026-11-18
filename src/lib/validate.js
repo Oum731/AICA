@@ -9,6 +9,7 @@ export function normTel(v) {
 
 // Affichage du type « +212 606-715828 »
 export function fmtTel(t) {
+  if (!t) return '—';
   const m = /^\+212(\d{3})(\d+)$/.exec(t);
   if (m) return `+212 ${m[1]}-${m[2]}`;
   const m2 = /^\+(\d{3})(\d{3})(\d+)$/.exec(t);

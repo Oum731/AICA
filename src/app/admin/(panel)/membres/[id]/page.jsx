@@ -12,7 +12,7 @@ export default async function Fiche({ params, searchParams }) {
   if (!m) notFound();
   const maj = (await searchParams).maj;
   const qr = await QRCode.toDataURL(urlVerification(m.number), { margin: 1, width: 300 });
-  const photo = `/api/admin/membres/${m.id}/photo`;
+  const photo = m.has_photo ? `/api/admin/membres/${m.id}/photo` : null;
   return (
     <>
       <div className="rowhead"><h1>{m.prenoms} {m.nom.toUpperCase()} <small>{m.number}</small></h1><span className={'pill ' + (m.status === 'active' ? 'ok' : 'err')}>{m.status === 'active' ? 'Active' : 'Révoquée'}</span></div>
@@ -24,6 +24,8 @@ export default async function Fiche({ params, searchParams }) {
         <form action={regenerer}><input type="hidden" name="id" value={m.id} /><button className="btn ghost">↻ Régénérer</button></form>
         <form action={setStatut}><input type="hidden" name="id" value={m.id} /><input type="hidden" name="statut" value={m.status === 'active' ? 'revoked' : 'active'} /><button className="btn ghost">{m.status === 'active' ? '⛔ Révoquer la carte' : '✅ Réactiver'}</button></form>
       </div>
+      {(m.sexe || m.situation || m.date_maroc || m.diplome || m.reseaux || m.logement) && <p className="hint">Archive : {[m.sexe, m.situation, m.date_maroc && `au Maroc depuis le ${m.date_maroc}`, m.diplome && `diplôme : ${m.diplome}`, m.logement && `logement : ${m.logement}`, m.reseaux].filter(Boolean).join(' · ')}</p>}
+      {m.source === 'import' && <p className="hint">Carte importée de l’ancien Google Sheet{m.has_photo ? '' : ' (sans photo : ajoutez-la ci-dessous)'}.</p>}
       <p className="hint">Lien personnel du membre : <code>/carte/{m.token}</code></p>
       <h2>Modifier les informations</h2>
       <MembreEdit m={m} />

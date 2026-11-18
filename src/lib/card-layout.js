@@ -14,6 +14,7 @@ export const NAVY = '#0b1f3a';
 export const BG_CSS = 'linear-gradient(135deg, #f7c59f 0%, #efe6b5 50%, #a5dba3 100%)';
 
 export function fmtDate(d) {
+  if (!d) return '—';
   const s = typeof d === 'string' ? d.slice(0, 10) : new Date(d).toISOString().slice(0, 10);
   const [y, m, j] = s.split('-');
   return `${j}-${m}-${y}`;
@@ -40,12 +41,12 @@ export function frontTexts(m) {
   const rows = [
     ['NOM', String(m.nom).toUpperCase()],
     ['PRÉNOMS', m.prenoms],
-    ['NAISSANCE', `${fmtDate(m.naissance_date)} à ${m.naissance_lieu}`],
+    ['NAISSANCE', m.naissance_date ? `${fmtDate(m.naissance_date)} à ${m.naissance_lieu}` : (m.naissance_lieu || '—')],
     ['FONCTION', m.fonction],
     ['PROFESSION', m.profession],
     ['QUARTIER', m.quartier],
     ['TÉLÉPHONE', fmtTel(m.telephone)],
-    ['URGENCE', m.urgence_nom],
+    ['URGENCE', m.urgence_nom || '—'],
   ];
   let y = 38;
   for (const [l, v] of rows) {
@@ -55,7 +56,7 @@ export function frontTexts(m) {
   }
   t.push({ t: fmtTel(m.urgence_tel), x: VX, y: y - 1.8, size: 6.4, color: '#1a2433' });
   t.push({ t: 'N° :', x: LX, y: 134, size: 5.8, bold: true, color: NAVY });
-  t.push({ t: m.piece_no, x: VX, y: 134, size: ajuste(m.piece_no, 6.4, 60), color: '#1a2433' });
+  t.push({ t: m.piece_no || '—', x: VX, y: 134, size: ajuste(m.piece_no || '—', 6.4, 60), color: '#1a2433' });
   t.push({ t: m.number, x: BADGE.x + BADGE.w / 2, y: BADGE.y + 3, size: 7.2, bold: true, align: 'center', color: '#ffffff' });
   t.push({ t: 'Valable : ' + fmtDate(m.valid_from), x: W - 9, y: 122, size: 5.6, italic: true, align: 'right', color: NAVY });
   t.push({ t: 'Au : ' + fmtDate(m.valid_to), x: W - 9, y: 130, size: 5.6, italic: true, align: 'right', color: NAVY });
